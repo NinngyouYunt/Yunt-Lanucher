@@ -1,0 +1,46 @@
+<html>
+  <body>
+    <table>
+      <tr>
+        <td></td>
+        <td><input type="number" id="input" value=1></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="button" onclick="generate('left')" value="Generate Left Expanding"></td>
+        <td></td>
+        <td><input type="button" onclick="generate('right')" value="Generate Right Expanding"></td>
+      </tr>
+      <tr>
+          <td></td>
+          <td><input type="button" onclick="generate('bottom')" value="Generate Bottom Expanding"></td>
+          <td></td>
+      </tr>
+    </table>
+    <br/>
+    <h3 id="title">
+      Select A Type
+      <input type="button" onclick="copy()" value="Copy Code">
+    </h3>   
+    <div id="content" style="background: grey"></div>
+
+    <script>
+      const copy = () => {
+        const el = document.createElement('textarea');
+        el.value = document.getElementById('content').innerText;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      };
+    </script>
+
+    <script src="ShareComponent.js"></script>
+    <script src="Icon.js"></script>
+    <script src="Text.js"></script>
+    <script src="Background.js"></script>
+  </body>
+</html>
+
+
+
