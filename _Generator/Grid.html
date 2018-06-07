@@ -1,0 +1,40 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td>Width: </td>
+        <td><input type="number" id="w" value=1><br/></td>
+      </tr>
+      <tr>
+          <td>Height: </td>
+          <td><input type="number" id="h" value=1><br/></td>
+        </tr>
+      <tr>
+          <td><input type="button" onclick="generate()" value="Generate All"></td>
+          <td><input type="button" onclick="generateOne()" value="Generate One"></td>
+      </tr>
+    </table>
+
+    <br/>
+    <h3 id="title">
+      Result:
+      <input type="button" onclick="copy()" value="Copy Code">
+    </h3>   
+    <div id="content" style="background: grey"></div>
+
+    <script src="single.js"></script>
+    <script>
+      const copy = () => {
+        const el = document.createElement('textarea');
+        el.value = document.getElementById('content').innerText;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+      };
+      
+    </script>
+  </body>
+</html>
