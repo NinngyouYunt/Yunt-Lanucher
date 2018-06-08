@@ -1,89 +1,122 @@
-class Onigiri{
-  constructor(x, y){
-    // Just Icon and do nothing
-    this.x = x;
-    this.y = y;
-    this.code = [
-      '['+this.name()+']',
-      'Meter=Image',
-      'ImageName=#PATH#\\#name'+this.name()+'#.png',
-      'X=('+this.x+' * (#SIZE# + #GAP#))',
-      'Y=('+this.y+' * (#SIZE# + #GAP#))',
-      'W=#SIZE#',
-      'H=#SIZE#',
-      'AntiAlias=1'
+getIconTemplate = (x, y) => {
+    return [
+        '[' + name(x, y) + ']',
+        'Meter=Image',
+        'ImageName=#PATH#\\#name' + name(x, y) + '#.png',
+        'X=(' + x + ' * (#SIZE# + #GAP#))',
+        'Y=(' + y + ' * (#SIZE# + #GAP#))',
+        'W=#iconSize#',
+        'H=#iconSize#',
+        'AntiAlias=1'
     ];
-    this.config = [
-      'name'+this.name()+'=NAME',
-      'path'+this.name()+'="PATH"'
+};
+getFields = (x, y) => {
+    return [
+        'name' + name(x, y) + '=NAME',
+        'path' + name(x, y) + '="PATH"'
     ];
-  }
+};
+name = (x, y) => {
+    return String(x) + '-' + String(y);
+};
 
-  name(){
-    return String(this.x)+'-'+String(this.y);
-  }
-
-  createHoverParent(groupName){
-    let result = this.code.concat([
-      'MouseOverAction=[!ShowMeter B-'+groupName+'] [!Redraw]',
-      'Group=Parent'
+createIcon = (x, y, groupName = 'Ungroup') => {
+    let result = getIconTemplate(x, y).concat([
+        'LeftMouseUpAction=["#path' + name(x, y) + '#"]',
+        'Group=' + groupName
     ]);
-    return result;
-  }
-
-  createToggleParent(){
-    let result = this.code.concat([
-      'LeftMouseUpAction=[!ToggleMeterGroup '+groupName+'] [!Redraw]',
-      'Group=Parent'
-    ]);
-    return result;
-  }
-
-  createChild(groupName='DEFAULT'){
-    let result = this.code.concat([
-      'LeftMouseUpAction=["#path'+this.name()+'#"]',
-      'Group='+groupName
-    ]);
-    if (!(groupName === 'DEFAULT')){
-      result.concat(['Hidden=1']);
+    if (!(groupName === 'Ungroup')) {
+        result.concat(['Hidden=1']);
     }
     return result;
-  }
+};
 
-  createTooltip(){
-  }
+createToggleParent = (x, y, groupName) => {
+    let result = getIconTemplate(x, y).concat([
+        'MouseOverAction=[!ToggleMeterGroup ' + groupName + '] [!Redraw]',
+        'Group=ToggleParent'
+    ]);
+    return result;
+};
 
+createHoverParent = (x, y, groupName) => {
+    let result = getIconTemplate(x, y).concat([
+        'MouseOverAction=[!ShowMeter ' + groupName + '] [!Redraw]',
+        'Group=HoverParent'
+    ]);
+    return result;
+};
 
-class HoverBackground{
-  // Hover will show group
-  constructor(x,y,length,groupName){
-    thix.x = x;
-    this.y = y;
-    this.length = length;
-    this.code = [
-      'Meter=String',
-      'X=('+this.x+' * (#SIZE# + #GAP#))',
-      'Y=('+this.y+' * (#SIZE# + #GAP#))',
-      'SolidColor=0,0,0,1',
-      'MouseOverAction=[!ShowMeterGroup '+groupName+'] [!Redraw]',
-      'MouseLeaveAction=[!HideMeterGroup '+groupName+'] [!HideMeter B-'+groupName+'] [!Redraw]',
-      'Hidden=1'
+createBackground = (x, y, length, direction = 'Right', groupName) => {
+    let result = [
+        '[' + groupName + ']',
+        'Meter=String',
+        'SolidColor=0,0,0,1',
+        'MouseOverAction=[!ShowMeterGroup ' + groupName + '] [!Redraw]',
+        'MouseLeaveAction=[!HideMeterGroup ' + groupName + '] [!HideMeter ' + groupName + '] [!Redraw]',
+        'Hidden=1'
     ];
-  }
-  createVertical(){
-    let result = this.code.concat([
-      'W=#iconSize#',
-      'H=('+this.length+' * (#SIZE# + #GAP#))'
-    ]);
-    return result;
-  }
-  createHorizontal(){
-    let result = this.code.concat([
-      'W=('+this.length+' * (#SIZE# + #GAP#))',
-      'H=#SIZE#'
-    ]);
-    return result;
-  }
-}
+    switch (direction.toUpperCase()[0]) {
+        case 'L':
+            result.concat([
+                'X=(' + x + ' * (#SIZE# + #GAP#)) - (' + length + ' * (#SIZE# + #GAP#))',
+                'Y=(' + y + ' * (#SIZE# + #GAP#))',
+                'W=(' + length + ' * (#SIZE# + #GAP#))',
+                'H=#SIZE#'
+            ]);
+            break;
+        case 'R':
+            result.concat([
+                'X=(' + x + ' * (#SIZE# + #GAP#))',
+                'Y=(' + y + ' * (#SIZE# + #GAP#))',
+                'W=(' + length + ' * (#SIZE# + #GAP#))',
+                'H=#SIZE#'
+            ]);
+            break;
+        case 'U':
+            result.concat([
+                'X=(' + x + ' * (#SIZE# + #GAP#))',
+                'Y=(' + y + ' * (#SIZE# + #GAP#)) - (' + length + ' * (#SIZE# + #GAP#))',
+                'W=#iconSize#',
+                'H=(' + length + ' * (#SIZE# + #GAP#))'
+            ]);
+        case 'D':
+            result.concat([
+                'X=(' + x + ' * (#SIZE# + #GAP#))',
+                'Y=(' + y + ' * (#SIZE# + #GAP#))',
+                'W=#iconSize#',
+                'H=(' + length + ' * (#SIZE# + #GAP#))'
+            ]);
+            break;
+    }
+};
 
-export {HoverParent, ToggleParent, Child, HoverBackground, Tooltip};
+
+createHoverGroup = (x, y, length, direction, groupName) => {
+    let parent = createHoverParent(x, y, groupName);
+    let children = [];
+
+    switch (direction.toUpperCase()[0]) {
+        case 'L':
+
+            break;
+        case 'R':
+
+            break;
+        case 'U':
+
+        case 'D':
+
+            break;
+    }
+    for (let i = 0; i < length; i++) {
+        children.push(createIcon(x + 1, y, groupName))
+    }
+    let background = createBackground(x, y, length, direction, groupName);
+};
+
+createToggleGroup = () => {
+
+};
+
+export { createIcon, getFields, createHoverGroup, createToggleGroup };
