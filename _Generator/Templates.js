@@ -1,3 +1,8 @@
+const nl = "<br/>";
+
+function name(x, y) {
+    return String(x) + '-' + String(y);
+}
 getIconTemplate = (x, y) => {
     return [
         '[' + name(x, y) + ']',
@@ -5,19 +10,16 @@ getIconTemplate = (x, y) => {
         'ImageName=#PATH#\\#name' + name(x, y) + '#.png',
         'X=(' + x + ' * (#SIZE# + #GAP#))',
         'Y=(' + y + ' * (#SIZE# + #GAP#))',
-        'W=#iconSize#',
-        'H=#iconSize#',
+        'W=#SIZE#',
+        'H=#SIZE#',
         'AntiAlias=1'
     ];
 };
-getFields = (x, y) => {
+getField = (x, y) => {
     return [
         'name' + name(x, y) + '=NAME',
         'path' + name(x, y) + '="PATH"'
     ];
-};
-name = (x, y) => {
-    return String(x) + '-' + String(y);
 };
 
 createIcon = (x, y, groupName = 'Ungroup') => {
@@ -95,28 +97,61 @@ createBackground = (x, y, length, direction = 'Right', groupName) => {
 createHoverGroup = (x, y, length, direction, groupName) => {
     let parent = createHoverParent(x, y, groupName);
     let children = [];
-
     switch (direction.toUpperCase()[0]) {
         case 'L':
-
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x - 1, y, groupName))
+            }
             break;
         case 'R':
-
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x + 1, y, groupName))
+            }
             break;
         case 'U':
-
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x, y - 1, groupName))
+            }
         case 'D':
-
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x, y + 1, groupName))
+            }
             break;
     }
-    for (let i = 0; i < length; i++) {
-        children.push(createIcon(x + 1, y, groupName))
-    }
     let background = createBackground(x, y, length, direction, groupName);
+    return {
+        parent: parent,
+        children: children,
+        background: background
+    };
 };
 
 createToggleGroup = () => {
-
+    let parent = createToggleGroup(x, y, groupName);
+    let children = [];
+    switch (direction.toUpperCase()[0]) {
+        case 'L':
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x - 1, y, groupName))
+            }
+            break;
+        case 'R':
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x + 1, y, groupName))
+            }
+            break;
+        case 'U':
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x, y - 1, groupName))
+            }
+        case 'D':
+            for (let i = 1; i < length; i++) {
+                children.push(createIcon(x, y + 1, groupName))
+            }
+            break;
+    }
+    return {
+        parent: parent,
+        children: children
+    };
 };
-
-export { createIcon, getFields, createHoverGroup, createToggleGroup };

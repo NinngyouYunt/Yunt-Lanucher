@@ -1,0 +1,89 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Generator</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    </style>
+</head>
+
+<body>
+    <h1>Title</h1>
+    <div>
+        <table>
+            <tr>
+                <td>X:</td>
+                <td><input type="number" id="x" value="1" /></td>
+            </tr>
+            <tr>
+                <td>Y: </td>
+                <td><input type="number" id="y" value="1" /></td>
+            </tr>
+            <tr>
+                <td>Group:</td>
+                <td><input type="text" onclick="" value="Ungroup"></td>
+            </tr>
+            <tr>
+                <td>Length:</td>
+                <td><input type="number" id="length" value="1" /></td>
+            </tr>
+            <tr>
+                <td>
+                    <select id="type">
+                        <option value="0">Normal</option>
+                        <option value="1">Hover</option>
+                        <option value="2">Toggle</option>
+                    </select>
+                </td>
+                <td>
+                    <select id="direction">
+                                <option value="U">Up</option>
+                                <option value="L">Left</option>
+                                <option value="D">Down</option>
+                                <option value="R">Right</option>
+                            </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" onclick="generate()" value="Generate" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="result">
+        <div class="sub-result">
+            <input type="button" command="copy()" value="Copy">
+            <div id="parent">
+                Icon Here
+            </div>
+        </div>
+        <div class="sub-result">
+            <input type="button" command="copy()" value="Copy">
+            <div id="fields">
+                Fields Here
+            </div>
+        </div>
+        <div class="sub-result">
+            <input type="button" command="copy()" value="Copy">
+            <div id="children">
+                Sub Icons Here
+            </div>
+        </div>
+        <div class="sub-result">
+            <input type="button" command="copy()" value="Copy">
+            <div id="background">
+                Background Here
+            </div>
+        </div>
+    </div>
+    <script>
+    </script>
+    <script src="Templates.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>

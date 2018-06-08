@@ -1,0 +1,18 @@
+.result {}
+
+.sub-result {
+    margin: 10px;
+    padding: 5px;
+    display: inline-block;
+    background-color: black;
+    color: white;
+}
+
+.sub-result input {
+    width: 100px;
+    height: 30px;
+}
+
+.sub-result div {
+    padding: 5px;
+}
