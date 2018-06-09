@@ -6,6 +6,7 @@
     display: inline-block;
     background-color: black;
     color: white;
+    vertical-align: top;
 }
 
 .sub-result input {

@@ -23,7 +23,7 @@
             </tr>
             <tr>
                 <td>Group:</td>
-                <td><input type="text" onclick="" value="Ungroup"></td>
+                <td><input type="text" id="group" value="Ungroup"></td>
             </tr>
             <tr>
                 <td>Length:</td>
@@ -50,37 +50,45 @@
                 <td>
                     <input type="button" onclick="generate()" value="Generate" />
                 </td>
+                <td>
+                    <input type="button" onclick="generateAll()" value="Generate Entire File" />
+                </td>
             </tr>
         </table>
     </div>
     <div class="result">
         <div class="sub-result">
-            <input type="button" command="copy()" value="Copy">
-            <div id="parent">
+            <input type="button" onclick="copy('header')" value="Copy">
+            <div id="header">
+                Header Here
+            </div>
+        </div>
+        <div class="sub-result">
+            <input type="button" onclick="copy('icon')" value="Copy">
+            <div id="icon">
                 Icon Here
             </div>
         </div>
         <div class="sub-result">
-            <input type="button" command="copy()" value="Copy">
+            <input type="button" onclick="copy('fields')" value="Copy">
             <div id="fields">
                 Fields Here
             </div>
         </div>
         <div class="sub-result">
-            <input type="button" command="copy()" value="Copy">
+            <input type="button" onclick="copy('children')" value="Copy">
             <div id="children">
                 Sub Icons Here
             </div>
         </div>
         <div class="sub-result">
-            <input type="button" command="copy()" value="Copy">
+            <input type="button" onclick="copy('background')" value="Copy">
             <div id="background">
                 Background Here
             </div>
         </div>
     </div>
-    <script>
-    </script>
+
     <script src="Templates.js"></script>
     <script src="script.js"></script>
 

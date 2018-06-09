@@ -1,9 +1,10 @@
 const nl = "<br/>";
+const lb = "====================================================<br/>"
 
 function name(x, y) {
     return String(x) + '-' + String(y);
 }
-getIconTemplate = (x, y) => {
+const getIconTemplate = (x, y) => {
     return [
         '[' + name(x, y) + ']',
         'Meter=Image',
@@ -15,33 +16,33 @@ getIconTemplate = (x, y) => {
         'AntiAlias=1'
     ];
 };
-getField = (x, y) => {
+const getField = (x, y) => {
     return [
         'name' + name(x, y) + '=NAME',
         'path' + name(x, y) + '="PATH"'
     ];
 };
 
-createIcon = (x, y, groupName = 'Ungroup') => {
+const createIcon = (x, y, groupName = 'Ungroup') => {
     let result = getIconTemplate(x, y).concat([
         'LeftMouseUpAction=["#path' + name(x, y) + '#"]',
         'Group=' + groupName
     ]);
     if (!(groupName === 'Ungroup')) {
-        result.concat(['Hidden=1']);
+        result.push('Hidden=1');
     }
     return result;
 };
 
-createToggleParent = (x, y, groupName) => {
+const createToggleParent = (x, y, groupName) => {
     let result = getIconTemplate(x, y).concat([
-        'MouseOverAction=[!ToggleMeterGroup ' + groupName + '] [!Redraw]',
+        'LeftMouseUpAction=[!ToggleMeterGroup ' + groupName + '] [!Redraw]',
         'Group=ToggleParent'
     ]);
     return result;
 };
 
-createHoverParent = (x, y, groupName) => {
+const createHoverParent = (x, y, groupName) => {
     let result = getIconTemplate(x, y).concat([
         'MouseOverAction=[!ShowMeter ' + groupName + '] [!Redraw]',
         'Group=HoverParent'
@@ -49,7 +50,7 @@ createHoverParent = (x, y, groupName) => {
     return result;
 };
 
-createBackground = (x, y, length, direction = 'Right', groupName) => {
+const createBackground = (x, y, length, direction, groupName) => {
     let result = [
         '[' + groupName + ']',
         'Meter=String',
@@ -58,9 +59,10 @@ createBackground = (x, y, length, direction = 'Right', groupName) => {
         'MouseLeaveAction=[!HideMeterGroup ' + groupName + '] [!HideMeter ' + groupName + '] [!Redraw]',
         'Hidden=1'
     ];
-    switch (direction.toUpperCase()[0]) {
+
+    switch (direction) {
         case 'L':
-            result.concat([
+            result = result.concat([
                 'X=(' + x + ' * (#SIZE# + #GAP#)) - (' + length + ' * (#SIZE# + #GAP#))',
                 'Y=(' + y + ' * (#SIZE# + #GAP#))',
                 'W=(' + length + ' * (#SIZE# + #GAP#))',
@@ -68,7 +70,7 @@ createBackground = (x, y, length, direction = 'Right', groupName) => {
             ]);
             break;
         case 'R':
-            result.concat([
+            result = result.concat([
                 'X=(' + x + ' * (#SIZE# + #GAP#))',
                 'Y=(' + y + ' * (#SIZE# + #GAP#))',
                 'W=(' + length + ' * (#SIZE# + #GAP#))',
@@ -76,45 +78,55 @@ createBackground = (x, y, length, direction = 'Right', groupName) => {
             ]);
             break;
         case 'U':
-            result.concat([
+            result = result.concat([
                 'X=(' + x + ' * (#SIZE# + #GAP#))',
                 'Y=(' + y + ' * (#SIZE# + #GAP#)) - (' + length + ' * (#SIZE# + #GAP#))',
-                'W=#iconSize#',
+                'W=#SIZE#',
                 'H=(' + length + ' * (#SIZE# + #GAP#))'
             ]);
         case 'D':
-            result.concat([
+            result = result.concat([
                 'X=(' + x + ' * (#SIZE# + #GAP#))',
                 'Y=(' + y + ' * (#SIZE# + #GAP#))',
-                'W=#iconSize#',
+                'W=#SIZE#',
                 'H=(' + length + ' * (#SIZE# + #GAP#))'
             ]);
             break;
     }
+    return result
 };
 
 
-createHoverGroup = (x, y, length, direction, groupName) => {
+const createHoverGroup = (x, y, length, direction, groupName) => {
     let parent = createHoverParent(x, y, groupName);
+    x = Number(x);
+    y = Number(y);
+    length = Number(length);
     let children = [];
-    switch (direction.toUpperCase()[0]) {
+    let fields = [getField(x, y)];
+    switch (direction) {
         case 'L':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x - 1, y, groupName))
+                children.push(createIcon(Number(x - i), y, groupName));
+                fields.push(getField(Number(x - i), y));
             }
             break;
         case 'R':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x + 1, y, groupName))
+                children.push(createIcon(Number(x + i), y, groupName));
+                fields.push(getField(Number(x + i), y));
             }
             break;
         case 'U':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x, y - 1, groupName))
+                children.push(createIcon(x, Number(y - i), groupName));
+                fields.push(getField(x, Number(y - i)));
             }
+            break;
         case 'D':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x, y + 1, groupName))
+                children.push(createIcon(x, Number(y) + i, groupName));
+                fields.push(getField(x, Number(y + i)));
             }
             break;
     }
@@ -122,36 +134,55 @@ createHoverGroup = (x, y, length, direction, groupName) => {
     return {
         parent: parent,
         children: children,
+        fields: fields,
         background: background
     };
 };
 
-createToggleGroup = () => {
-    let parent = createToggleGroup(x, y, groupName);
+const createToggleGroup = (x, y, length, direction, groupName) => {
+    let parent = createToggleParent(x, y, groupName);
     let children = [];
-    switch (direction.toUpperCase()[0]) {
+    let fields = [getField(x, y)];
+    switch (direction) {
         case 'L':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x - 1, y, groupName))
+                children.push(createIcon(Number(x) - i, y, groupName));
+                fields.push(getField(Number(x) - i, y));
             }
             break;
         case 'R':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x + 1, y, groupName))
+                children.push(createIcon(Number(x) + i, y, groupName));
+                fields.push(getField(Number(x) + i, y));
             }
             break;
         case 'U':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x, y - 1, groupName))
+                children.push(createIcon(x, Number(y) - i, groupName));
+                fields.push(getField(x, Number(y) - i));
             }
+            break;
         case 'D':
             for (let i = 1; i < length; i++) {
-                children.push(createIcon(x, y + 1, groupName))
+                children.push(createIcon(x, Number(y) + i, groupName));
+                fields.push(getField(x, Number(y) + i));
             }
             break;
     }
     return {
         parent: parent,
-        children: children
+        children: children,
+        fields: fields
     };
+};
+
+const createHeader = () => {
+    return [
+        '[Variables]',
+        'SIZE=48',
+        'GAP=10',
+        'FONT=Arial',
+        'FONTSIZE=20',
+        'PATH=#@#\\',
+    ];
 };
